@@ -1,0 +1,1151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QuizForge</title>
+<style>
+/* Hide sandbox preview banner and connection status */
+#ninja-daytona-banner,
+#ninja-connection-status,
+#ninja-badge {
+    display: none !important;
+}
+body {
+    padding-top: 0 !important;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+--bg:#0F0F1A;--bg2:#16162A;--bgc:#1E1E35;--bgh:#252540;
+--p7:#5B21B6;--p6:#6D28D9;--p5:#7C3AED;--p4:#8B5CF6;--p3:#A78BFA;--p2:#C4B5FD;
+--glow:rgba(124,58,237,.35);
+--green:#10B981;--gbg:rgba(16,185,129,.15);
+--red:#EF4444;--rbg:rgba(239,68,68,.15);
+--yellow:#F59E0B;--ybg:rgba(245,158,11,.15);
+--blue:#3B82F6;--bbg:rgba(59,130,246,.15);
+--t1:#F1F0FF;--t2:#A89EC0;--tm:#6B6380;
+--bdr:rgba(124,58,237,.2);--bl:rgba(255,255,255,.06);
+--sh:0 4px 24px rgba(0,0,0,.4);--sg:0 0 30px rgba(124,58,237,.2);
+--r:12px;--rl:18px;--rx:24px;--tr:.22s cubic-bezier(.4,0,.2,1)
+}
+html{scroll-behavior:smooth}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--t1);min-height:100vh;overflow-x:hidden;line-height:1.6}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg2)}::-webkit-scrollbar-thumb{background:var(--p7);border-radius:3px}
+.orb{position:fixed;border-radius:50%;filter:blur(80px);pointer-events:none;z-index:0;opacity:.12}
+.o1{width:500px;height:500px;background:var(--p6);top:-100px;right:-100px}
+.o2{width:400px;height:400px;background:var(--blue);bottom:-100px;left:-100px}
+.o3{width:300px;height:300px;background:var(--p4);top:50%;left:50%;transform:translate(-50%,-50%)}
+#app{position:relative;z-index:1;min-height:100vh}
+nav{position:sticky;top:0;z-index:100;background:rgba(15,15,26,.85);backdrop-filter:blur(16px);border-bottom:1px solid var(--bl);padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:64px;gap:12px;overflow:hidden}
+.nbrand{display:flex;align-items:center;gap:10px;cursor:pointer;flex-shrink:0}
+.nlogo{width:36px;height:36px;background:linear-gradient(135deg,var(--p6),var(--p4));border-radius:9px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 18px var(--glow)}
+.ntitle{font-size:1.3rem;font-weight:700;letter-spacing:-.5px}.ntitle span{color:var(--p4)}
+.ntabs{display:flex;gap:2px;background:var(--bgc);border-radius:10px;padding:4px;border:1px solid var(--bl)}
+.ntab{padding:7px 16px;border-radius:8px;cursor:pointer;font-size:.85rem;font-weight:500;color:var(--t2);transition:var(--tr);border:none;background:none;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.ntab .ttxt{position:static;transform:none;font-size:inherit;font-weight:inherit;color:inherit;display:inline}
+.ntab:hover{color:var(--t1);background:var(--bgh)}
+.ntab.active{background:linear-gradient(135deg,var(--p7),var(--p5));color:white;box-shadow:0 2px 12px var(--glow)}
+.nbadge{background:var(--bgc);border:1px solid var(--bdr);border-radius:20px;padding:6px 14px;font-size:.8rem;color:var(--p3);display:flex;align-items:center;gap:6px}
+.page{display:none;padding:32px 24px;max-width:1100px;margin:0 auto}
+.page.active{display:block;animation:fadeIn .3s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.hero{text-align:center;padding:40px 0 32px}
+.hbadge{display:inline-flex;align-items:center;gap:8px;background:var(--glow);border:1px solid var(--bdr);border-radius:20px;padding:6px 16px;font-size:.82rem;color:var(--p3);margin-bottom:20px}
+.hero h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:800;line-height:1.15;letter-spacing:-1px;margin-bottom:14px}
+.grad{background:linear-gradient(135deg,var(--p4),var(--p2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero p{font-size:1.05rem;color:var(--t2);max-width:540px;margin:0 auto 28px}
+.hact{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:11px 22px;border-radius:var(--r);border:none;cursor:pointer;font-size:.9rem;font-weight:600;transition:var(--tr);white-space:nowrap}
+.btnp{background:linear-gradient(135deg,var(--p6),var(--p5));color:white;box-shadow:0 4px 16px var(--glow)}
+.btnp:hover{transform:translateY(-1px);box-shadow:0 6px 24px var(--glow)}
+.btns{background:var(--bgc);color:var(--t1);border:1px solid var(--bdr)}
+.btns:hover{background:var(--bgh);border-color:var(--p5)}
+.btng{background:transparent;color:var(--t2)}.btng:hover{color:var(--t1);background:var(--bgh)}
+.btnsm{padding:7px 14px;font-size:.82rem}
+.btnlg{padding:14px 28px;font-size:1rem}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none!important}
+.btnred{background:var(--red);color:white}
+.card{background:var(--bgc);border:1px solid var(--bl);border-radius:var(--rl);padding:24px;transition:var(--tr)}
+.card:hover{border-color:var(--bdr)}
+.cglow{box-shadow:var(--sg);border-color:var(--bdr)}
+.ggrid{display:grid;grid-template-columns:1fr 340px;gap:20px;margin-top:24px}
+@media(max-width:850px){.ggrid{grid-template-columns:1fr}}
+.ilbl{font-size:.82rem;font-weight:600;color:var(--t2);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px}
+.ifld{width:100%;background:var(--bg2);border:1px solid var(--bl);border-radius:var(--r);padding:12px 16px;color:var(--t1);font-size:.95rem;font-family:inherit;transition:var(--tr);outline:none}
+.ifld:focus{border-color:var(--p5);box-shadow:0 0 0 3px rgba(124,58,237,.15)}
+.ifld::placeholder{color:var(--tm)}
+textarea.ifld{resize:vertical;min-height:120px}
+.optsec{display:flex;flex-direction:column;gap:16px}
+.orow{display:flex;gap:8px;flex-wrap:wrap}
+.ochip{padding:7px 14px;border-radius:8px;cursor:pointer;font-size:.82rem;font-weight:500;border:1px solid var(--bl);background:var(--bg2);color:var(--t2);transition:var(--tr)}
+.ochip:hover{border-color:var(--p5);color:var(--t1)}
+.ochip.sel{background:rgba(124,58,237,.2);border-color:var(--p5);color:var(--p3)}
+.dchips .ochip.sel[data-diff="easy"]{background:var(--gbg);border-color:var(--green);color:var(--green)}
+.dchips .ochip.sel[data-diff="medium"]{background:var(--ybg);border-color:var(--yellow);color:var(--yellow)}
+.dchips .ochip.sel[data-diff="hard"]{background:var(--rbg);border-color:var(--red);color:var(--red)}
+.ccnt{display:flex;align-items:center;gap:10px}
+.cbtn{width:32px;height:32px;border-radius:8px;border:1px solid var(--bl);background:var(--bg2);color:var(--t1);cursor:pointer;font-size:1.1rem;display:flex;align-items:center;justify-content:center;transition:var(--tr)}
+.cbtn:hover{border-color:var(--p5);background:var(--bgh)}
+.cdisp{min-width:36px;text-align:center;font-weight:700;font-size:1.1rem;color:var(--p3)}
+.pbwrap{height:4px;background:var(--bg2);border-radius:2px;overflow:hidden;margin-top:12px;display:none}
+.pb{height:100%;background:linear-gradient(90deg,var(--p7),var(--p4));border-radius:2px;transition:width .4s ease}
+.gmsg{font-size:.85rem;color:var(--t2);margin-top:8px;display:none}
+.qhdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px}
+.qmeta{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.qptxt{font-size:.88rem;color:var(--t2)}
+.qsbdg{background:var(--bgc);border:1px solid var(--bdr);border-radius:20px;padding:5px 14px;font-size:.85rem;display:flex;align-items:center;gap:6px}
+.sc{color:var(--green);font-weight:700}.si{color:var(--red);font-weight:700}
+.tcirc{position:relative;width:58px;height:58px}
+.tsvg{transform:rotate(-90deg)}
+.ttrk{fill:none;stroke:var(--bgh);stroke-width:4}
+.tfl{fill:none;stroke:var(--p5);stroke-width:4;stroke-linecap:round;transition:stroke-dashoffset 1s linear,stroke .3s}
+.ttxt{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:.88rem;font-weight:700;color:var(--t1)}
+.turg .tfl{stroke:var(--red)}.turg .ttxt{color:var(--red)}
+.qpbwrap{margin-bottom:20px;height:5px;background:var(--bg2);border-radius:3px;overflow:hidden}
+.qpb{height:100%;background:linear-gradient(90deg,var(--p7),var(--p4));transition:width .4s ease}
+.qcard{animation:fadeIn .35s ease}
+.qtbdg{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:20px;font-size:.78rem;font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:14px}
+.bmcq{background:var(--bbg);color:var(--blue)}
+.btf{background:var(--ybg);color:var(--yellow)}
+.bfib{background:rgba(16,185,129,.15);color:var(--green)}
+.ddot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-left:4px}
+.de{background:var(--green)}.dm{background:var(--yellow)}.dh{background:var(--red)}
+.qtxt{font-size:1.15rem;font-weight:600;line-height:1.55;margin-bottom:24px;color:var(--t1)}
+.olist{display:flex;flex-direction:column;gap:10px}
+.oitem{display:flex;align-items:center;gap:14px;padding:14px 18px;border-radius:var(--r);border:1.5px solid var(--bl);background:var(--bg2);cursor:pointer;transition:var(--tr);font-size:.95rem}
+.oitem:hover:not(.dis){border-color:var(--p5);background:var(--bgh)}
+.oltr{width:30px;height:30px;border-radius:8px;background:var(--bgh);border:1px solid var(--bl);display:flex;align-items:center;justify-content:center;font-size:.82rem;font-weight:700;color:var(--t2);flex-shrink:0;transition:var(--tr)}
+.oitem:hover:not(.dis) .oltr{background:var(--p7);border-color:var(--p5);color:white}
+.oitem.sel{border-color:var(--p5);background:rgba(124,58,237,.12)}
+.oitem.sel .oltr{background:var(--p6);border-color:var(--p4);color:white}
+.oitem.cor{border-color:var(--green)!important;background:var(--gbg)!important}
+.oitem.cor .oltr{background:var(--green)!important;border-color:var(--green)!important;color:white!important}
+.oitem.inc{border-color:var(--red)!important;background:var(--rbg)!important}
+.oitem.inc .oltr{background:var(--red)!important;border-color:var(--red)!important;color:white!important}
+.oitem.dis{cursor:not-allowed}
+.tfopts{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.tfbtn{padding:22px 16px;border-radius:var(--rl);border:1.5px solid var(--bl);background:var(--bg2);cursor:pointer;transition:var(--tr);display:flex;flex-direction:column;align-items:center;gap:8px;font-size:1rem;font-weight:700;color:var(--t2)}
+.tfbtn:hover:not(.dis){border-color:var(--p5);background:var(--bgh);color:var(--t1)}
+.tfbtn.sel{border-color:var(--p5);background:rgba(124,58,237,.12);color:var(--p3)}
+.tfbtn.cor{border-color:var(--green)!important;background:var(--gbg)!important;color:var(--green)!important}
+.tfbtn.inc{border-color:var(--red)!important;background:var(--rbg)!important;color:var(--red)!important}
+.fibwrp{position:relative}
+.fibinp{width:100%;background:var(--bg2);border:1.5px solid var(--bl);border-radius:var(--r);padding:14px 16px;color:var(--t1);font-size:1rem;font-family:inherit;transition:var(--tr);outline:none}
+.fibinp:focus{border-color:var(--p5);box-shadow:0 0 0 3px rgba(124,58,237,.15)}
+.fibinp.cor{border-color:var(--green);background:var(--gbg)}
+.fibinp.inc{border-color:var(--red);background:var(--rbg)}
+.expbox{margin-top:18px;padding:16px;border-radius:var(--r);background:rgba(124,58,237,.08);border:1px solid var(--bdr);animation:fadeIn .3s ease}
+.explbl{font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--p4);margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.exptxt{font-size:.92rem;color:var(--t2);line-height:1.65}
+.qact{display:flex;gap:12px;margin-top:24px;justify-content:space-between;align-items:center;flex-wrap:wrap}
+.rhero{text-align:center;padding:32px 0}
+.srwrp{position:relative;width:160px;height:160px;margin:0 auto 20px}
+.srsvg{transform:rotate(-90deg)}
+.srtrk{fill:none;stroke:var(--bgh);stroke-width:10}
+.srfl{fill:none;stroke:var(--p5);stroke-width:10;stroke-linecap:round;transition:stroke-dashoffset 1.2s cubic-bezier(.4,0,.2,1)}
+.srtxt{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center}
+.srpct{font-size:2rem;font-weight:800;color:var(--t1);line-height:1}
+.srlbl{font-size:.75rem;color:var(--tm)}
+.rtitle{font-size:1.6rem;font-weight:700;margin-bottom:6px}
+.rsub{color:var(--t2);font-size:.95rem}
+.rsgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:24px 0}
+@media(max-width:650px){.rsgrid{grid-template-columns:repeat(2,1fr)}}
+.rstat{background:var(--bgc);border:1px solid var(--bl);border-radius:var(--r);padding:16px;text-align:center}
+.rsval{font-size:1.6rem;font-weight:800;line-height:1.2}
+.rslbl{font-size:.78rem;color:var(--tm);margin-top:4px}
+.vg{color:var(--green)}.vr{color:var(--red)}.vy{color:var(--yellow)}.vp{color:var(--p4)}
+.rrev{margin-top:24px}
+.ritem{background:var(--bgc);border:1px solid var(--bl);border-radius:var(--r);padding:16px 18px;margin-bottom:10px;display:flex;align-items:flex-start;gap:14px}
+.rico{width:24px;height:24px;flex-shrink:0;margin-top:2px}
+.rq{font-size:.92rem;font-weight:600;margin-bottom:4px}
+.ra{font-size:.85rem;color:var(--t2)}
+.ract{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:20px}
+.fcctrl{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px}
+.fcprog{font-size:.9rem;color:var(--t2)}
+.fcscn{perspective:1200px;max-width:640px;margin:0 auto;cursor:pointer;user-select:none}
+.fcinn{position:relative;width:100%;padding-bottom:65%;transform-style:preserve-3d;transition:transform .6s cubic-bezier(.4,0,.2,1)}
+.fcinn.flipped{transform:rotateY(180deg)}
+.fcface{position:absolute;top:0;left:0;width:100%;height:100%;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:var(--rx);padding:32px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.fcfr{background:linear-gradient(135deg,var(--bgc) 0%,rgba(124,58,237,.12) 100%);border:1.5px solid var(--bdr);box-shadow:var(--sh),var(--sg)}
+.fcbk{transform:rotateY(180deg);background:linear-gradient(135deg,rgba(124,58,237,.18) 0%,rgba(59,130,246,.1) 100%);border:1.5px solid var(--p5);box-shadow:var(--sh),0 0 40px rgba(124,58,237,.3)}
+.fclbl{position:absolute;top:16px;left:50%;transform:translateX(-50%);font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;padding:3px 12px;border-radius:20px}
+.fcflbl{background:var(--bgh);color:var(--tm)}
+.fcblbl{background:rgba(124,58,237,.3);color:var(--p3)}
+.fctop{font-size:.8rem;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:var(--p4);margin-bottom:14px}
+.fcq{font-size:1.2rem;font-weight:700;line-height:1.5;color:var(--t1)}
+.fca{font-size:1.05rem;font-weight:600;line-height:1.6;color:var(--t1)}
+.fchnt{font-size:.82rem;color:var(--tm);position:absolute;bottom:16px}
+.fcnav{display:flex;align-items:center;justify-content:center;gap:16px;margin-top:24px}
+.fcnbtn{width:46px;height:46px;border-radius:50%;border:1.5px solid var(--bl);background:var(--bgc);color:var(--t1);cursor:pointer;transition:var(--tr);display:flex;align-items:center;justify-content:center}
+.fcnbtn:hover{border-color:var(--p5);background:var(--bgh)}
+.fcnbtn:disabled{opacity:.35;cursor:not-allowed}
+.fcrat{display:flex;gap:10px}
+.fcrb{padding:8px 20px;border-radius:8px;border:1px solid var(--bl);cursor:pointer;font-size:.85rem;font-weight:600;transition:var(--tr);background:var(--bgc);color:var(--t2)}
+.fcrb.knew{border-color:var(--green);color:var(--green)}.fcrb.knew:hover{background:var(--gbg)}
+.fcrb.miss{border-color:var(--red);color:var(--red)}.fcrb.miss:hover{background:var(--rbg)}
+.fcrb:disabled{opacity:.4;cursor:not-allowed}
+.fcdots{display:flex;gap:5px;justify-content:center;margin-top:16px;flex-wrap:wrap}
+.fcdot{width:8px;height:8px;border-radius:50%;background:var(--bgh);transition:var(--tr)}
+.fcdot.active{background:var(--p5);transform:scale(1.3)}
+.fcdot.knew{background:var(--green)}.fcdot.miss{background:var(--red)}
+.stgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+@media(max-width:650px){.stgrid{grid-template-columns:repeat(2,1fr)}}
+.stcard{background:var(--bgc);border:1px solid var(--bl);border-radius:var(--rl);padding:20px;display:flex;flex-direction:column;gap:6px;transition:var(--tr)}
+.stcard:hover{border-color:var(--bdr);transform:translateY(-2px)}
+.stico{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;margin-bottom:4px}
+.ip{background:rgba(124,58,237,.2)}.ig{background:rgba(16,185,129,.2)}.iy{background:rgba(245,158,11,.2)}.ib{background:rgba(59,130,246,.2)}
+.stval{font-size:2rem;font-weight:800;line-height:1}
+.stlbl{font-size:.82rem;color:var(--tm)}
+.stsub{font-size:.78rem;color:var(--t2);margin-top:2px}
+.smgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}
+@media(max-width:650px){.smgrid{grid-template-columns:1fr}}
+.mbc{display:flex;flex-direction:column;gap:10px;margin-top:8px}
+.mbr{display:flex;align-items:center;gap:10px}
+.mblbl{font-size:.82rem;color:var(--t2);min-width:60px}
+.mbt{flex:1;height:8px;background:var(--bg2);border-radius:4px;overflow:hidden}
+.mbf{height:100%;border-radius:4px;transition:width .8s cubic-bezier(.4,0,.2,1)}
+.mbv{font-size:.82rem;color:var(--t2);min-width:36px;text-align:right}
+.strkd{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px}
+.snum{font-size:4rem;font-weight:800;color:var(--yellow);line-height:1}
+.slbl{font-size:.9rem;color:var(--t2);margin-top:6px}
+.sbst{font-size:.82rem;color:var(--tm);margin-top:4px}
+.hlist{max-height:280px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;margin-top:8px}
+.hitem{background:var(--bg2);border:1px solid var(--bl);border-radius:var(--r);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;font-size:.85rem}
+.htop{font-weight:600;color:var(--t1)}
+.hmeta{color:var(--tm);font-size:.78rem;margin-top:2px}
+.hscore{font-weight:700;font-size:.95rem}
+.accrw{display:flex;align-items:center;justify-content:center;padding:16px}
+.accri{position:relative}
+.accct{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center}
+.accpct{font-size:1.8rem;font-weight:800;color:var(--t1);line-height:1}
+.acclbl{font-size:.72rem;color:var(--tm)}
+.stitle{font-size:1rem;font-weight:700;color:var(--t1);margin-bottom:4px}
+.sdesc{font-size:.82rem;color:var(--tm);margin-bottom:16px}
+.notif{position:fixed;top:76px;right:20px;z-index:999;background:var(--bgc);border:1px solid var(--bdr);border-radius:var(--r);padding:12px 18px;display:flex;align-items:center;gap:10px;box-shadow:var(--sh);font-size:.88rem;animation:slideIn .3s ease;max-width:320px}
+@keyframes slideIn{from{transform:translateX(120%);opacity:0}to{transform:translateX(0);opacity:1}}
+.notif.success{border-color:var(--green)}.notif.error{border-color:var(--red)}.notif.info{border-color:var(--p5)}
+.empty{text-align:center;padding:60px 24px;color:var(--tm)}
+.empty svg{opacity:.3;margin-bottom:16px;display:block;margin-left:auto;margin-right:auto}
+.empty h3{font-size:1.1rem;color:var(--t2);margin-bottom:8px}
+.empty p{font-size:.88rem}
+.movl{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.7);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .25s}
+.movl.open{opacity:1;pointer-events:all}
+.modal{background:var(--bgc);border:1px solid var(--bdr);border-radius:var(--rx);padding:28px;max-width:480px;width:100%;transform:scale(.92);transition:transform .25s;box-shadow:var(--sh),var(--sg)}
+.movl.open .modal{transform:scale(1)}
+.mtitle{font-size:1.2rem;font-weight:700;margin-bottom:8px}
+.mdesc{font-size:.9rem;color:var(--t2);margin-bottom:20px}
+.mact{display:flex;gap:10px;justify-content:flex-end}
+.spinner{width:20px;height:20px;border-radius:50%;border:2px solid rgba(255,255,255,.2);border-top-color:white;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+.pulse{animation:pulse 1.8s ease-in-out infinite}
+.confp{position:fixed;width:10px;height:10px;border-radius:2px;z-index:300;pointer-events:none;animation:cfall linear forwards}
+@keyframes cfall{0%{transform:translateY(-20px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+.divider{height:1px;background:var(--bl);margin:20px 0}
+@media(max-width:960px){nav{padding:0 14px;gap:8px}.ntabs{gap:2px}.ntab{padding:6px 10px;font-size:.78rem}.ntab .ttxt{display:none}.nbadge{display:none}}
+@media(max-width:640px){.page{padding:20px 14px}.hero h1{font-size:1.8rem}.tfopts{grid-template-columns:1fr}}
+</style>
+<script src="https://sites.super.betamyninja.ai/_assets/ninja-daytona-script.js"></script>
+</head>
+<body>
+<div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div>
+<div id="app">
+
+<nav>
+  <div class="nbrand" onclick="goHome()">
+    <div class="nlogo">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+    </div>
+    <span class="ntitle">Quiz<span>Forge</span></span>
+  </div>
+  <div class="ntabs">
+    <button class="ntab active" onclick="switchTab('generate')" id="tab-generate">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+      <span class="ttxt">Generate</span>
+    </button>
+    <button class="ntab" onclick="switchTab('flashcards')" id="tab-flashcards">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="3"/><path d="M12 12v.01M8 12v.01M16 12v.01"/></svg>
+      <span class="ttxt">Flashcards</span>
+    </button>
+    <button class="ntab" onclick="switchTab('stats')" id="tab-stats">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      <span class="ttxt">Stats</span>
+    </button>
+  </div>
+  <div class="nbadge" id="nav-streak-badge">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+    <span id="nav-streak-val">0</span> streak
+  </div>
+</nav>
+
+<!-- GENERATE PAGE -->
+<div class="page active" id="page-generate">
+  <div class="hero">
+    <div class="hbadge">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+      AI-Powered Quiz Generator
+    </div>
+    <h1>Forge Your Knowledge<br>with <span class="grad">Smart Quizzes</span></h1>
+    <p>Generate adaptive quizzes from any topic or text. Master concepts with interactive flashcards and track your progress.</p>
+    <div class="hact">
+      <button class="btn btnp btnlg" onclick="loadDemo()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+        Try Demo Mode
+      </button>
+      <button class="btn btns btnlg" onclick="document.getElementById('topic-input').focus()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Custom Topic
+      </button>
+    </div>
+  </div>
+
+  <div id="generate-main">
+    <div class="ggrid">
+      <div class="card cglow">
+        <div class="stitle">Quiz Source</div>
+        <div class="sdesc">Enter a topic or paste custom text</div>
+        <div style="margin-bottom:14px">
+          <div class="ilbl">Topic / Subject</div>
+          <input type="text" class="ifld" id="topic-input" placeholder="e.g. World War II, Photosynthesis, Python basics...">
+        </div>
+        <div style="text-align:center;color:var(--tm);font-size:.82rem;margin:8px 0">or paste your own text</div>
+        <div>
+          <div class="ilbl">Custom Text <span style="color:var(--tm);font-weight:400">(optional)</span></div>
+          <textarea class="ifld" id="text-input" placeholder="Paste article, notes, or any text..."></textarea>
+        </div>
+        <div class="pbwrap" id="gen-pb-wrap"><div class="pb" id="gen-pb" style="width:0%"></div></div>
+        <div class="gmsg" id="gen-msg"><span class="pulse">Generating your quiz...</span></div>
+      </div>
+      <div class="optsec">
+        <div class="card">
+          <div class="ilbl">Question Types</div>
+          <div class="orow" id="type-chips">
+            <div class="ochip sel" data-type="mcq" onclick="toggleChip(this)">Multiple Choice</div>
+            <div class="ochip sel" data-type="tf" onclick="toggleChip(this)">True / False</div>
+            <div class="ochip sel" data-type="fib" onclick="toggleChip(this)">Fill in Blank</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="ilbl">Difficulty</div>
+          <div class="orow dchips" id="diff-chips">
+            <div class="ochip" data-diff="easy" onclick="selDiff(this)">Easy</div>
+            <div class="ochip" data-diff="medium" onclick="selDiff(this)">Medium</div>
+            <div class="ochip" data-diff="hard" onclick="selDiff(this)">Hard</div>
+            <div class="ochip sel" data-diff="mixed" onclick="selDiff(this)">Mixed</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="ilbl">Number of Questions</div>
+          <div class="ccnt">
+            <button class="cbtn" onclick="adjCount(-1)">&#8722;</button>
+            <span class="cdisp" id="q-count">10</span>
+            <button class="cbtn" onclick="adjCount(1)">+</button>
+            <span style="font-size:.82rem;color:var(--tm)">(max 20)</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="ilbl">Timer per Question</div>
+          <div class="orow" id="timer-chips">
+            <div class="ochip" data-timer="0" onclick="selTimer(this)">Off</div>
+            <div class="ochip sel" data-timer="30" onclick="selTimer(this)">30s</div>
+            <div class="ochip" data-timer="60" onclick="selTimer(this)">60s</div>
+            <div class="ochip" data-timer="90" onclick="selTimer(this)">90s</div>
+          </div>
+        </div>
+        <button class="btn btnp" style="width:100%" onclick="generateQuiz()" id="gen-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+          Generate Quiz
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quiz Screen -->
+  <div id="quiz-screen" style="display:none">
+    <div class="qhdr">
+      <div class="qmeta">
+        <button class="btn btng btnsm" onclick="confirmQuit()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+          Exit
+        </button>
+        <div class="qptxt" id="q-prog-txt">Question 1 of 10</div>
+        <div class="qsbdg">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          <span class="sc" id="score-c">0</span>
+          <span style="color:var(--tm)">|</span>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          <span class="si" id="score-i">0</span>
+        </div>
+      </div>
+      <div class="tcirc" id="timer-wrap" style="display:none">
+        <svg class="tsvg" width="58" height="58" viewBox="0 0 58 58">
+          <circle class="ttrk" cx="29" cy="29" r="24"/>
+          <circle class="tfl" id="timer-fl" cx="29" cy="29" r="24" stroke-dasharray="150.796" stroke-dashoffset="0"/>
+        </svg>
+        <div class="ttxt" id="timer-txt">30</div>
+      </div>
+    </div>
+    <div class="qpbwrap"><div class="qpb" id="quiz-pb" style="width:10%"></div></div>
+    <div class="card qcard" id="question-card"></div>
+    <div class="qact">
+      <div id="skip-wrap"><button class="btn btng btnsm" onclick="skipQ()">Skip</button></div>
+      <div style="display:flex;gap:10px">
+        <button class="btn btns" id="check-btn" onclick="checkAnswer()" disabled>Check Answer</button>
+        <button class="btn btnp" id="next-btn" onclick="nextQ()" style="display:none">
+          Next <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Results Screen -->
+  <div id="results-screen" style="display:none">
+    <div class="rhero">
+      <div class="srwrp">
+        <svg class="srsvg" width="160" height="160" viewBox="0 0 160 160">
+          <circle class="srtrk" cx="80" cy="80" r="65"/>
+          <circle class="srfl" id="score-ring" cx="80" cy="80" r="65" stroke-dasharray="408.41" stroke-dashoffset="408.41"/>
+        </svg>
+        <div class="srtxt"><div class="srpct" id="final-pct">0%</div><div class="srlbl">Score</div></div>
+      </div>
+      <div class="rtitle" id="res-title">Quiz Complete!</div>
+      <div class="rsub" id="res-sub"></div>
+    </div>
+    <div class="rsgrid">
+      <div class="rstat"><div class="rsval vg" id="res-c">0</div><div class="rslbl">Correct</div></div>
+      <div class="rstat"><div class="rsval vr" id="res-i">0</div><div class="rslbl">Incorrect</div></div>
+      <div class="rstat"><div class="rsval vy" id="res-sk">0</div><div class="rslbl">Skipped</div></div>
+      <div class="rstat"><div class="rsval vp" id="res-t">0s</div><div class="rslbl">Time</div></div>
+    </div>
+    <div class="rrev" id="res-review"><div class="stitle" style="margin-bottom:12px">Answer Review</div></div>
+    <div class="ract">
+      <button class="btn btnp" onclick="retakeQuiz()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>
+        Retake Quiz
+      </button>
+      <button class="btn btns" onclick="switchTab('flashcards');buildFlashcards()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="3"/><path d="M12 9v6M9 12h6"/></svg>
+        Study Flashcards
+      </button>
+      <button class="btn btng" onclick="goHome()">New Quiz</button>
+    </div>
+  </div>
+</div>
+
+<!-- FLASHCARDS PAGE -->
+<div class="page" id="page-flashcards">
+  <div style="margin-bottom:24px">
+    <h2 style="font-size:1.6rem;font-weight:800;margin-bottom:6px">Flashcard Study Mode</h2>
+    <p style="color:var(--t2);font-size:.92rem">Click a card to flip and reveal the answer. Rate your confidence to track progress.</p>
+  </div>
+  <div id="fc-empty" class="empty">
+    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="3"/><path d="M12 9v6M9 12h6"/></svg>
+    <h3>No Flashcards Yet</h3>
+    <p>Generate a quiz first, then study the questions as flashcards.</p>
+    <button class="btn btnp" style="margin-top:16px" onclick="switchTab('generate')">Generate Quiz</button>
+  </div>
+  <div id="fc-content" style="display:none">
+    <div class="fcctrl">
+      <div class="fcprog">
+        Card <span id="fc-cur">1</span> of <span id="fc-tot">10</span>
+        &nbsp;&bull;&nbsp;
+        <span style="color:var(--green)" id="fc-knew-cnt">0</span> knew
+        &nbsp;<span style="color:var(--red)" id="fc-miss-cnt">0</span> missed
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="btn btns btnsm" onclick="shuffleFC()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/></svg>
+          Shuffle
+        </button>
+        <button class="btn btns btnsm" onclick="resetFC()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>
+          Reset
+        </button>
+      </div>
+    </div>
+    <div class="fcscn" onclick="flipCard()">
+      <div class="fcinn" id="fc-inner">
+        <div class="fcface fcfr">
+          <div class="fclbl fcflbl">QUESTION</div>
+          <div class="fctop" id="fc-topic">World History</div>
+          <div class="fcq" id="fc-q">Question text here</div>
+          <div class="fchnt">Click to reveal answer</div>
+        </div>
+        <div class="fcface fcbk">
+          <div class="fclbl fcblbl">ANSWER</div>
+          <div class="fca" id="fc-a">Answer text here</div>
+        </div>
+      </div>
+    </div>
+    <div class="fcdots" id="fc-dots"></div>
+    <div class="fcnav">
+      <button class="fcnbtn" id="fc-prev" onclick="fcNav(-1)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      </button>
+      <div class="fcrat">
+        <button class="fcrb miss" id="fc-miss-btn" onclick="rateCard('miss')" disabled>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          Missed
+        </button>
+        <button class="fcrb knew" id="fc-knew-btn" onclick="rateCard('knew')" disabled>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          Got It
+        </button>
+      </div>
+      <button class="fcnbtn" id="fc-next" onclick="fcNav(1)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </button>
+    </div>
+    <div id="fc-complete" style="display:none;margin-top:24px">
+      <div class="card cglow" style="text-align:center;padding:28px">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="margin:0 auto 12px;display:block"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        <div style="font-size:1.2rem;font-weight:700;margin-bottom:6px">Deck Complete!</div>
+        <div style="color:var(--t2);font-size:.9rem;margin-bottom:16px">
+          You knew <span style="color:var(--green);font-weight:700" id="fc-fin-knew">0</span>
+          and missed <span style="color:var(--red);font-weight:700" id="fc-fin-miss">0</span>
+        </div>
+        <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+          <button class="btn btnp" onclick="resetFC()">Study Again</button>
+          <button class="btn btns" onclick="studyMissed()">Study Missed Only</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- STATS PAGE -->
+<div class="page" id="page-stats">
+  <div style="margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+    <div>
+      <h2 style="font-size:1.6rem;font-weight:800;margin-bottom:4px">Study Dashboard</h2>
+      <p style="color:var(--t2);font-size:.92rem">Track your progress and identify areas for improvement.</p>
+    </div>
+    <button class="btn btng btnsm" onclick="confirmClear()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+      Clear Stats
+    </button>
+  </div>
+  <div class="stgrid">
+    <div class="stcard"><div class="stico ip"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div><div class="stval vp" id="st-quizzes">0</div><div class="stlbl">Quizzes Taken</div></div>
+    <div class="stcard"><div class="stico ig"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div><div class="stval vg" id="st-correct">0</div><div class="stlbl">Correct Answers</div><div class="stsub" id="st-acc-sub">-- accuracy</div></div>
+    <div class="stcard"><div class="stico iy"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div><div class="stval vy" id="st-streak">0</div><div class="stlbl">Current Streak</div><div class="stsub" id="st-best-sub">Best: 0</div></div>
+    <div class="stcard"><div class="stico ib"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div class="stval" id="st-time" style="color:#3B82F6">0m</div><div class="stlbl">Time Studied</div></div>
+  </div>
+  <div class="smgrid">
+    <div class="card">
+      <div class="stitle">Accuracy by Type</div>
+      <div class="sdesc">Performance on each question format</div>
+      <div class="mbc">
+        <div class="mbr"><span class="mblbl">MCQ</span><div class="mbt"><div class="mbf" id="bar-mcq" style="width:0%;background:var(--blue)"></div></div><span class="mbv" id="val-mcq">0%</span></div>
+        <div class="mbr"><span class="mblbl">True/False</span><div class="mbt"><div class="mbf" id="bar-tf" style="width:0%;background:var(--yellow)"></div></div><span class="mbv" id="val-tf">0%</span></div>
+        <div class="mbr"><span class="mblbl">Fill Blank</span><div class="mbt"><div class="mbf" id="bar-fib" style="width:0%;background:var(--green)"></div></div><span class="mbv" id="val-fib">0%</span></div>
+      </div>
+      <div class="divider"></div>
+      <div class="stitle">Difficulty Breakdown</div>
+      <div class="mbc" style="margin-top:10px">
+        <div class="mbr"><span class="mblbl">Easy</span><div class="mbt"><div class="mbf" id="bar-easy" style="width:0%;background:var(--green)"></div></div><span class="mbv" id="val-easy">0%</span></div>
+        <div class="mbr"><span class="mblbl">Medium</span><div class="mbt"><div class="mbf" id="bar-med" style="width:0%;background:var(--yellow)"></div></div><span class="mbv" id="val-med">0%</span></div>
+        <div class="mbr"><span class="mblbl">Hard</span><div class="mbt"><div class="mbf" id="bar-hard" style="width:0%;background:var(--red)"></div></div><span class="mbv" id="val-hard">0%</span></div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:16px">
+      <div class="card" style="flex:1">
+        <div class="stitle">Overall Accuracy</div>
+        <div class="accrw">
+          <div class="accri">
+            <svg width="130" height="130" viewBox="0 0 130 130" style="transform:rotate(-90deg)">
+              <circle cx="65" cy="65" r="52" fill="none" stroke="var(--bgh)" stroke-width="10"/>
+              <circle cx="65" cy="65" r="52" fill="none" stroke="var(--p5)" stroke-width="10" stroke-linecap="round" stroke-dasharray="326.73" stroke-dashoffset="326.73" id="acc-ring" style="transition:stroke-dashoffset 1s cubic-bezier(.4,0,.2,1)"/>
+            </svg>
+            <div class="accct"><div class="accpct" id="acc-pct">0%</div><div class="acclbl">Accuracy</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="card" style="flex:1">
+        <div class="strkd">
+          <div class="snum" id="streak-big">0</div>
+          <div class="slbl">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:-2px"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+            Current Streak
+          </div>
+          <div class="sbst" id="streak-best-txt">Best streak: 0</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="stitle">Quiz History</div>
+    <div class="sdesc">Recent quiz sessions</div>
+    <div class="hlist" id="history-list">
+      <div class="empty" style="padding:30px">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <p style="margin-top:10px">No quiz history yet!</p>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- MODALS -->
+<div class="movl" id="quit-modal">
+  <div class="modal">
+    <div class="mtitle">Quit Quiz?</div>
+    <div class="mdesc">Your progress will be lost. Are you sure?</div>
+    <div class="mact">
+      <button class="btn btng" onclick="closeModal('quit-modal')">Continue Quiz</button>
+      <button class="btn btnred" onclick="quitQuiz()">Quit</button>
+    </div>
+  </div>
+</div>
+<div class="movl" id="clear-modal">
+  <div class="modal">
+    <div class="mtitle">Clear All Stats?</div>
+    <div class="mdesc">This will permanently delete all quiz history and statistics. This cannot be undone.</div>
+    <div class="mact">
+      <button class="btn btng" onclick="closeModal('clear-modal')">Cancel</button>
+      <button class="btn btnred" onclick="clearStats()">Clear Everything</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// QuizForge - Complete Application
+var S={
+  questions:[],idx:0,correct:0,incorrect:0,skipped:0,
+  selAns:null,answered:false,
+  timer:null,timerSec:30,timerEnabled:false,timerMax:30,
+  topic:'',startTime:null,totalTime:0,
+  fcCards:[],fcIdx:0,fcFlipped:false,fcRatings:{},
+  qCount:10,selTypes:['mcq','tf','fib'],selDiff:'mixed',selTimer:30,
+  ansLog:[]
+};
+
+var SKEY='qf_v4';
+function loadSt(){try{return JSON.parse(localStorage.getItem(SKEY))||defSt();}catch(e){return defSt();}}
+function defSt(){return{totalQuizzes:0,totalCorrect:0,totalIncorrect:0,totalTime:0,streak:0,bestStreak:0,typeStats:{mcq:{c:0,t:0},tf:{c:0,t:0},fib:{c:0,t:0}},diffStats:{easy:{c:0,t:0},medium:{c:0,t:0},hard:{c:0,t:0}},history:[],lastQ:[]};}
+function saveSt(){localStorage.setItem(SKEY,JSON.stringify(ST));}
+var ST=loadSt();
+
+var DEMO=[
+  {id:1,type:'mcq',diff:'easy',topic:'World History',q:'In what year did World War II officially end?',opts:['1943','1944','1945','1946'],ans:2,exp:'WWII ended in 1945. Germany surrendered May 8 (V-E Day) and Japan surrendered September 2 (V-J Day) after the atomic bombings of Hiroshima and Nagasaki.'},
+  {id:2,type:'mcq',diff:'medium',topic:'World History',q:'Which ancient wonder was located in Alexandria, Egypt?',opts:['The Colossus of Rhodes','The Lighthouse of Alexandria','The Hanging Gardens','The Temple of Artemis'],ans:1,exp:'The Lighthouse of Alexandria stood ~100-130m tall and was one of the Seven Wonders of the Ancient World, guiding sailors for centuries.'},
+  {id:3,type:'tf',diff:'easy',topic:'World History',q:'The Berlin Wall fell in 1989.',ans:true,exp:'The Berlin Wall fell November 9, 1989, marking the end of the Cold War and leading to German reunification in 1990.'},
+  {id:4,type:'mcq',diff:'hard',topic:'World History',q:"The Treaty of Westphalia (1648) ended which conflict?",opts:["The Hundred Years War","The Thirty Years War","The Seven Years War","The Wars of the Roses"],ans:1,exp:"The Peace of Westphalia ended the Thirty Years War (1618-1648) and established modern concepts of state sovereignty."},
+  {id:5,type:'fib',diff:'medium',topic:'World History',q:'The ancient trade route connecting China to the Mediterranean was the _____ Road.',ans:'Silk',alts:['silk','silk road'],exp:'The Silk Road connected East Asia with South Asia, Persia, Arabia, and Southern Europe.'},
+  {id:6,type:'mcq',diff:'medium',topic:'World History',q:'Which empire was ruled by Genghis Khan?',opts:['Ottoman Empire','Byzantine Empire','Mongol Empire','Mughal Empire'],ans:2,exp:'Genghis Khan founded the Mongol Empire, the largest contiguous land empire in history.'},
+  {id:7,type:'tf',diff:'medium',topic:'World History',q:'Napoleon Bonaparte was born in France.',ans:false,exp:'Napoleon was born August 15, 1769 in Ajaccio, Corsica, which was transferred from Genoa to France just one year earlier.'},
+  {id:8,type:'mcq',diff:'hard',topic:'World History',q:'Who was the first Emperor of unified China?',opts:['Emperor Wu','Qin Shi Huang','Emperor Yao','Liu Bang'],ans:1,exp:'Qin Shi Huang became first emperor in 221 BC, standardizing currency, weights and writing, and initiating the Great Wall.'},
+  {id:9,type:'fib',diff:'easy',topic:'World History',q:'The Renaissance began in _____, a city-state in modern Italy.',ans:'Florence',alts:['florence'],exp:'The Renaissance began in Florence in the 14th century under Medici patronage, revolutionizing art, literature and science.'},
+  {id:10,type:'mcq',diff:'medium',topic:'World History',q:'The French Revolution began in which year?',opts:['1776','1783','1789','1799'],ans:2,exp:'The French Revolution began in 1789 with the storming of the Bastille on July 14.'},
+  {id:11,type:'tf',diff:'hard',topic:'World History',q:'The Ottoman Empire was the longest-lasting empire in history.',ans:false,exp:'The Byzantine (Eastern Roman) Empire lasted ~1,000 years, outlasting the Ottoman Empire.'},
+  {id:12,type:'mcq',diff:'easy',topic:'World History',q:'Who was the primary author of the Declaration of Independence?',opts:['George Washington','Benjamin Franklin','Thomas Jefferson','John Adams'],ans:2,exp:'Thomas Jefferson wrote the Declaration of Independence in 1776.'},
+  {id:13,type:'fib',diff:'hard',topic:'World History',q:'The _____ Plan was the American program to rebuild Western Europe after WWII.',ans:'Marshall',alts:['marshall','marshall plan'],exp:'The Marshall Plan provided over $13 billion to rebuild Western European economies after WWII.'},
+  {id:14,type:'mcq',diff:'medium',topic:'World History',q:'The Magna Carta was signed in which year?',opts:['1066','1215','1302','1453'],ans:1,exp:'King John signed the Magna Carta on June 15, 1215, limiting royal power and establishing rule of law.'},
+  {id:15,type:'tf',diff:'easy',topic:'World History',q:'Christopher Columbus reached the Americas in 1492.',ans:true,exp:'Columbus landed in the Bahamas on October 12, 1492, initiating sustained contact between Europe and the Americas.'},
+  {id:16,type:'mcq',diff:'hard',topic:'World History',q:'Which civilization built Machu Picchu?',opts:['Aztec','Maya','Inca','Olmec'],ans:2,exp:'Machu Picchu was built by the Inca Empire around 1450 CE, abandoned during the Spanish conquest, rediscovered in 1911.'},
+  {id:17,type:'fib',diff:'medium',topic:'World History',q:'The first powered airplane flight was made by the _____ brothers in 1903.',ans:'Wright',alts:['wright','wright brothers'],exp:'Orville and Wilbur Wright made the first powered flight December 17, 1903 at Kitty Hawk, NC.'},
+  {id:18,type:'mcq',diff:'medium',topic:'World History',q:'The Cold War was primarily between which two superpowers?',opts:['USA and China','USA and USSR','UK and USSR','USA and Germany'],ans:1,exp:'The Cold War (1947-1991) pitted the USA against the USSR in ideological rivalry, proxy wars and nuclear arms race.'},
+  {id:19,type:'tf',diff:'hard',topic:'World History',q:'The Suez Canal was built by the British.',ans:false,exp:'The Suez Canal was built by the French-Egyptian Suez Canal Company, opened 1869. Britain bought shares in 1875.'},
+  {id:20,type:'mcq',diff:'hard',topic:'World History',q:'Which event directly triggered World War I?',opts:['German invasion of Belgium','Assassination of Archduke Franz Ferdinand','Sinking of RMS Lusitania','The Russian Revolution'],ans:1,exp:'WWI was triggered by the assassination of Archduke Franz Ferdinand on June 28, 1914 in Sarajevo by Gavrilo Princip.'}
+];
+
+function sciQ(){return[
+  {id:'s1',type:'mcq',diff:'easy',topic:'Science',q:'Speed of light in a vacuum?',opts:['299,792 km/s','150,000 km/s','186,000 km/h','300,000 m/s'],ans:0,exp:'The speed of light is approximately 299,792 km/s.'},
+  {id:'s2',type:'mcq',diff:'medium',topic:'Science',q:'Chemical symbol "Au" represents which element?',opts:['Silver','Aluminum','Gold','Copper'],ans:2,exp:'Au comes from Latin Aurum meaning gold, atomic number 79.'},
+  {id:'s3',type:'tf',diff:'easy',topic:'Science',q:'Electrons have a positive charge.',ans:false,exp:'Electrons carry negative charge; protons carry positive charge.'},
+  {id:'s4',type:'fib',diff:'medium',topic:'Science',q:'Plants convert sunlight into food through _____.',ans:'Photosynthesis',alts:['photosynthesis'],exp:'Photosynthesis converts light energy into chemical energy stored as glucose.'},
+  {id:'s5',type:'mcq',diff:'easy',topic:'Science',q:'Which planet is the Red Planet?',opts:['Venus','Jupiter','Mars','Saturn'],ans:2,exp:'Mars appears red due to iron oxide on its surface.'},
+  {id:'s6',type:'mcq',diff:'medium',topic:'Science',q:'Atomic number of Carbon?',opts:['4','6','8','12'],ans:1,exp:'Carbon has 6 protons, making its atomic number 6.'},
+  {id:'s7',type:'tf',diff:'medium',topic:'Science',q:'Sound travels faster than light.',ans:false,exp:'Light (~300,000 km/s) is about 874,000x faster than sound (~343 m/s).'},
+  {id:'s8',type:'mcq',diff:'hard',topic:'Science',q:'What does DNA stand for?',opts:['Deoxyribonucleic Acid','Dinitrogen Acid','Deoxyribose Nucleotide Arrangement','Dynamic Nucleic Assembly'],ans:0,exp:'DNA = Deoxyribonucleic Acid, the hereditary material in organisms.'},
+  {id:'s9',type:'fib',diff:'hard',topic:'Science',q:"In E=mc2, c represents the speed of _____.",ans:'light',alts:['light'],exp:'c is the speed of light (~300,000 km/s) in Einstein\'s mass-energy equation.'},
+  {id:'s10',type:'mcq',diff:'hard',topic:'Science',q:"Heisenberg's Uncertainty Principle states:",opts:['Energy is conserved','Objects at rest stay at rest','Position and momentum cannot both be precisely known','Matter and energy are equivalent'],ans:2,exp:"The more precisely a particle's position is known, the less precisely its momentum can be known."}
+];}
+function mathQ(){return[
+  {id:'m1',type:'mcq',diff:'easy',topic:'Math',q:'Value of pi to 2 decimal places?',opts:['3.14','3.16','3.12','3.18'],ans:0,exp:'Pi = 3.14159... the ratio of circumference to diameter.'},
+  {id:'m2',type:'tf',diff:'easy',topic:'Math',q:'A prime number can only be divided by 1 and itself.',ans:true,exp:'A prime has exactly two distinct divisors: 1 and itself.'},
+  {id:'m3',type:'mcq',diff:'medium',topic:'Math',q:'Pythagorean theorem:',opts:['a2+b2=c2','a+b=c','a2xb2=c2','a3+b3=c3'],ans:0,exp:'In a right triangle: a squared + b squared = c squared.'},
+  {id:'m4',type:'fib',diff:'medium',topic:'Math',q:'The _____ sequence: 0,1,1,2,3,5,8,13... each equals sum of previous two.',ans:'Fibonacci',alts:['fibonacci'],exp:'Fibonacci sequence appears throughout nature and mathematics.'},
+  {id:'m5',type:'mcq',diff:'hard',topic:'Math',q:'The fundamental theorem of calculus connects:',opts:['Algebra and geometry','Differentiation and integration','Addition and multiplication','Real and complex numbers'],ans:1,exp:'It shows differentiation and integration are inverse operations.'},
+  {id:'m6',type:'mcq',diff:'easy',topic:'Math',q:'What is 15% of 200?',opts:['25','30','35','40'],ans:1,exp:'0.15 x 200 = 30.'},
+  {id:'m7',type:'tf',diff:'medium',topic:'Math',q:'Zero is a positive number.',ans:false,exp:'Zero is even but neither positive nor negative.'},
+  {id:'m8',type:'mcq',diff:'hard',topic:'Math',q:'Who developed calculus independently from Newton?',opts:['Euler','Leibniz','Gauss','Descartes'],ans:1,exp:"Leibniz developed calculus independently; his notation dx and dy is standard today."}
+];}
+function geoQ(){return[
+  {id:'g1',type:'mcq',diff:'easy',topic:'Geography',q:'Largest continent by area?',opts:['Africa','Americas','Europe','Asia'],ans:3,exp:'Asia covers ~44.6 million km2, about 30% of land area.'},
+  {id:'g2',type:'tf',diff:'easy',topic:'Geography',q:'The Amazon is the longest river in the world.',ans:false,exp:'The Nile is longest. The Amazon leads in water volume.'},
+  {id:'g3',type:'fib',diff:'medium',topic:'Geography',q:'Mount _____ is the world highest peak at 8,849m.',ans:'Everest',alts:['everest','mt everest','mount everest'],exp:'Mount Everest in the Himalayas, first climbed by Hillary and Tenzing Norgay in 1953.'},
+  {id:'g4',type:'mcq',diff:'medium',topic:'Geography',q:'How many countries are in Africa?',opts:['44','47','54','62'],ans:2,exp:'Africa has 54 recognized sovereign countries.'},
+  {id:'g5',type:'tf',diff:'medium',topic:'Geography',q:'Australia is both a country and a continent.',ans:true,exp:'Australia uniquely is both a sovereign nation and an entire continent.'},
+  {id:'g6',type:'mcq',diff:'hard',topic:'Geography',q:'Deepest ocean?',opts:['Atlantic','Arctic','Indian','Pacific'],ans:3,exp:'Pacific Ocean, Mariana Trench reaches ~11,034m.'},
+  {id:'g7',type:'mcq',diff:'hard',topic:'Geography',q:'Atacama Desert is primarily in?',opts:['Peru','Argentina','Chile','Bolivia'],ans:2,exp:'Atacama is mainly in northern Chile, one of the driest places on Earth.'},
+  {id:'g8',type:'fib',diff:'easy',topic:'Geography',q:'The _____ Ocean surrounds Antarctica.',ans:'Southern',alts:['southern'],exp:'The Southern (Antarctic) Ocean encircles Antarctica.'}
+];}
+function techQ(){return[
+  {id:'t1',type:'mcq',diff:'easy',topic:'Technology',q:'HTML stands for?',opts:['HyperText Markup Language','High Transfer Markup Language','HyperText Machine Language','Hyperlink Markup Language'],ans:0,exp:'HTML = HyperText Markup Language, the standard for web pages.'},
+  {id:'t2',type:'tf',diff:'easy',topic:'Technology',q:'Python is a compiled programming language.',ans:false,exp:'Python is interpreted, not compiled (though it creates bytecode internally).'},
+  {id:'t3',type:'mcq',diff:'medium',topic:'Technology',q:'CPU stands for?',opts:['Computer Processing Unit','Central Processing Unit','Core Processing Utility','Central Program Unit'],ans:1,exp:'CPU = Central Processing Unit, the brain of the computer.'},
+  {id:'t4',type:'fib',diff:'medium',topic:'Technology',q:'CSS stands for Cascading _____ Sheets.',ans:'Style',alts:['style','styles'],exp:'CSS = Cascading Style Sheets, for styling HTML documents.'},
+  {id:'t5',type:'mcq',diff:'hard',topic:'Technology',q:'Time complexity of binary search?',opts:['O(n)','O(n2)','O(log n)','O(n log n)'],ans:2,exp:'Binary search is O(log n), halving the search space each step.'},
+  {id:'t6',type:'mcq',diff:'easy',topic:'Technology',q:'Who developed Android?',opts:['Apple','Microsoft','Google','Samsung'],ans:2,exp:'Android Inc. was acquired by Google in 2005.'},
+  {id:'t7',type:'tf',diff:'medium',topic:'Technology',q:'The internet and World Wide Web are the same.',ans:false,exp:'The internet is the network; the Web is a service running on it.'},
+  {id:'t8',type:'mcq',diff:'medium',topic:'Technology',q:'API stands for?',opts:['Application Programming Interface','Automated Program Integration','Advanced Processing Input','Application Protocol Interface'],ans:0,exp:'API = Application Programming Interface, defining how software components interact.'},
+  {id:'t9',type:'fib',diff:'medium',topic:'Technology',q:'A function that calls itself is using _____.',ans:'Recursion',alts:['recursion','recursive'],exp:'Recursion: a function calling itself to solve problems.'},
+  {id:'t10',type:'mcq',diff:'hard',topic:'Technology',q:'What is a deadlock?',opts:['Program out of memory','Processes waiting for each others resources indefinitely','CPU overheats','Network packet loss'],ans:1,exp:'Deadlock: processes waiting for each other to release resources, none can proceed.'}
+];}
+function litQ(){return[
+  {id:'l1',type:'mcq',diff:'easy',topic:'Literature',q:'Who wrote Romeo and Juliet?',opts:['Dickens','Shakespeare','Austen','Homer'],ans:1,exp:'Shakespeare wrote Romeo and Juliet around 1594-1596.'},
+  {id:'l2',type:'tf',diff:'easy',topic:'Literature',q:'"1984" was written by George Orwell.',ans:true,exp:'1984 was published in 1949 by George Orwell.'},
+  {id:'l3',type:'mcq',diff:'medium',topic:'Literature',q:'Atticus Finch appears in which novel?',opts:['Of Mice and Men','The Great Gatsby','To Kill a Mockingbird','Brave New World'],ans:2,exp:"Atticus Finch is the protagonist of Harper Lee's To Kill a Mockingbird (1960)."},
+  {id:'l4',type:'fib',diff:'medium',topic:'Literature',q:'The Odyssey was written by ancient Greek poet _____.',ans:'Homer',alts:['homer'],exp:'Homer wrote The Iliad and The Odyssey.'},
+  {id:'l5',type:'mcq',diff:'hard',topic:'Literature',q:'"It was the best of times" opens which novel?',opts:['Oliver Twist','Great Expectations','A Tale of Two Cities','David Copperfield'],ans:2,exp:'A Tale of Two Cities (1859) by Charles Dickens.'},
+  {id:'l6',type:'mcq',diff:'easy',topic:'Literature',q:'How many books in the main Harry Potter series?',opts:['5','6','7','8'],ans:2,exp:"J.K. Rowling's series has 7 books, Philosopher's Stone to Deathly Hallows."},
+  {id:'l7',type:'tf',diff:'hard',topic:'Literature',q:'Franz Kafka was born in Prague, then part of Austria-Hungary.',ans:true,exp:'Kafka (1883-1924) was born in Prague when it was part of Austria-Hungary.'}
+];}
+function genQ(topic){var t=topic;return[
+  {id:'gn1',type:'mcq',diff:'easy',topic:t,q:'Which best describes '+t+'?',opts:[t+' is fundamental to modern understanding',t+' has no applications',t+' is irrelevant today',t+' is purely theoretical'],ans:0,exp:t+' has both theoretical foundations and practical applications.'},
+  {id:'gn2',type:'tf',diff:'easy',topic:t,q:t+' continues to evolve with new discoveries.',ans:true,exp:'All fields advance through ongoing research and discoveries.'},
+  {id:'gn3',type:'mcq',diff:'medium',topic:t,q:'Most effective approach for studying '+t+'?',opts:['Active recall and spaced repetition','Reading once is enough','Memorizing without understanding','Avoiding practice problems'],ans:0,exp:'Active recall and spaced repetition produce the best long-term retention.'},
+  {id:'gn4',type:'fib',diff:'medium',topic:t,q:'Understanding the core _____ of '+t+' is essential before advancing.',ans:'principles',alts:['principles','fundamentals','concepts','basics'],exp:'Strong foundations enable understanding of advanced concepts.'},
+  {id:'gn5',type:'mcq',diff:'hard',topic:t,q:'How does '+t+' relate to other disciplines?',opts:['Connects to multiple fields','Exists in complete isolation','Cannot be studied practically','Has no real-world use'],ans:0,exp:t+' intersects with other disciplines creating rich learning opportunities.'},
+  {id:'gn6',type:'tf',diff:'medium',topic:t,q:'Practical application is important for mastering '+t+'.',ans:true,exp:'Combining theory with practice leads to deep and lasting learning.'},
+  {id:'gn7',type:'mcq',diff:'easy',topic:t,q:'Which best helps when learning '+t+'?',opts:['Combining study with practice','Passive reading only','Skipping basics','Avoiding all resources'],ans:0,exp:'Theory combined with practice produces the best learning outcomes.'},
+  {id:'gn8',type:'fib',diff:'hard',topic:t,q:'Critical _____ skills are essential for evaluating information in '+t+'.',ans:'thinking',alts:['thinking','analysis'],exp:'Critical thinking enables analysis and well-reasoned conclusions in any field.'}
+];}
+
+function shuffle(a){var b=a.slice();for(var i=b.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=b[i];b[i]=b[j];b[j]=t;}return b;}
+
+function getPool(topic,types,diff,count){
+  var tl=topic.toLowerCase(),pool=[];
+  if(tl.includes('history'))pool=DEMO.slice();
+  else if(tl.includes('science')||tl.includes('physics')||tl.includes('chem'))pool=sciQ();
+  else if(tl.includes('bio'))pool=sciQ().concat([
+    {id:'b1',type:'mcq',diff:'easy',topic:'Biology',q:"Cell's powerhouse?",opts:['Nucleus','Ribosome','Mitochondria','Golgi'],ans:2,exp:'Mitochondria generate ATP energy for the cell.'},
+    {id:'b2',type:'tf',diff:'easy',topic:'Biology',q:'Humans have 46 chromosomes in most body cells.',ans:true,exp:'23 pairs = 46 chromosomes in somatic cells.'},
+    {id:'b3',type:'mcq',diff:'medium',topic:'Biology',q:'Universal blood donor type?',opts:['A positive','B negative','O negative','AB positive'],ans:2,exp:'O negative lacks A, B, and Rh antigens, compatible with all types.'}
+  ]);
+  else if(tl.includes('math'))pool=mathQ();
+  else if(tl.includes('geo'))pool=geoQ();
+  else if(tl.includes('lit')||tl.includes('book')||tl.includes('novel'))pool=litQ();
+  else if(tl.includes('tech')||tl.includes('program')||tl.includes('cod')||tl.includes('computer'))pool=techQ();
+  else pool=genQ(topic);
+  pool=pool.filter(function(q){return types.indexOf(q.type)>=0;});
+  if(diff!=='mixed')pool=pool.filter(function(q){return q.diff===diff;});
+  return shuffle(pool).slice(0,Math.min(count,pool.length));
+}
+
+function genFromText(text,types,diff,count){
+  var sents=text.match(/[^.!?]+[.!?]+/g)||[];
+  var qs=[];
+  for(var i=0;i<sents.length&&qs.length<count*2;i++){
+    var s=sents[i].trim();if(s.length<25)continue;
+    var nums=s.match(/\b\d{4}\b|\b\d+(?:\.\d+)?\s*(?:million|billion|thousand|percent|%)\b/i);
+    var d=['easy','medium','hard'][i%3];
+    if(types.indexOf('tf')>=0)qs.push({id:'tx'+i,type:'tf',diff:d,topic:'Custom',q:s.replace(/[.!?]+$/,'')+' is true.',ans:true,exp:'From text: "'+s+'"'});
+    if(types.indexOf('fib')>=0&&nums){var num=nums[0];qs.push({id:'tx'+i+'f',type:'fib',diff:d,topic:'Custom',q:s.replace(num,'_____').replace(/[.!?]+$/,'?'),ans:num.trim(),alts:[num.trim().toLowerCase()],exp:'From text: "'+s+'"'});}
+  }
+  return shuffle(qs).slice(0,count);
+}
+
+// NAV
+function switchTab(t){
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
+  document.querySelectorAll('.ntab').forEach(function(b){b.classList.remove('active');});
+  document.getElementById('page-'+t).classList.add('active');
+  document.getElementById('tab-'+t).classList.add('active');
+  if(t==='stats')renderStats();
+  if(t==='flashcards')renderFC();
+}
+function goHome(){
+  if(S.timer)clearInterval(S.timer);
+  document.getElementById('quiz-screen').style.display='none';
+  document.getElementById('results-screen').style.display='none';
+  document.getElementById('generate-main').style.display='block';
+  switchTab('generate');
+}
+
+// CHIPS
+function toggleChip(el){
+  el.classList.toggle('sel');
+  var a=document.querySelectorAll('#type-chips .ochip.sel');
+  if(a.length===0){document.querySelectorAll('#type-chips .ochip').forEach(function(c){c.classList.add('sel');});}
+  S.selTypes=Array.from(document.querySelectorAll('#type-chips .ochip.sel')).map(function(c){return c.dataset.type;});
+}
+function selDiff(el){document.querySelectorAll('#diff-chips .ochip').forEach(function(c){c.classList.remove('sel');});el.classList.add('sel');S.selDiff=el.dataset.diff;}
+function selTimer(el){document.querySelectorAll('#timer-chips .ochip').forEach(function(c){c.classList.remove('sel');});el.classList.add('sel');S.selTimer=parseInt(el.dataset.timer);}
+function adjCount(d){S.qCount=Math.max(5,Math.min(20,S.qCount+d));document.getElementById('q-count').textContent=S.qCount;}
+
+// GENERATE
+function loadDemo(){
+  document.getElementById('topic-input').value='World History';
+  S.qCount=15;document.getElementById('q-count').textContent=15;
+  S.selDiff='mixed';
+  S.selTypes=['mcq','tf','fib'];
+  document.querySelectorAll('#diff-chips .ochip').forEach(function(c){c.classList.remove('sel');});
+  document.querySelector('#diff-chips [data-diff="mixed"]').classList.add('sel');
+  showNotif('Demo mode! 15 World History questions loaded.','info');
+  var qs=shuffle(DEMO.slice()).slice(0,15);
+  setTimeout(function(){finishGenerate(qs,'World History','');},300);
+}
+
+function generateQuiz(){
+  var topic=document.getElementById('topic-input').value.trim();
+  var text=document.getElementById('text-input').value.trim();
+  if(!topic&&!text){showNotif('Please enter a topic or paste some text!','error');return;}
+  S.selTypes=Array.from(document.querySelectorAll('#type-chips .ochip.sel')).map(function(c){return c.dataset.type;});
+  if(!S.selTypes.length)S.selTypes=['mcq','tf','fib'];
+  var btn=document.getElementById('gen-btn');
+  btn.disabled=true;btn.innerHTML='<div class="spinner"></div> Generating with AI...';
+  document.getElementById('gen-pb-wrap').style.display='block';
+  document.getElementById('gen-msg').style.display='block';
+  document.getElementById('gen-msg').innerHTML='<span class="pulse">AI is generating your quiz... this may take a moment</span>';
+  var prog=0;
+  var pi=setInterval(function(){prog+=Math.random()*8;if(prog>90)prog=90;document.getElementById('gen-pb').style.width=prog+'%';},500);
+
+  // Use AI backend
+  var controller=new AbortController();
+  var aiTimeout=setTimeout(function(){controller.abort();},150000);
+
+  fetch('/api/generate',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({topic:topic,text:text,types:S.selTypes,difficulty:S.selDiff,count:S.qCount}),
+    signal:controller.signal
+  })
+  .then(function(resp){return resp.json().then(function(data){return {ok:resp.ok,data:data};});})
+  .then(function(result){
+    clearTimeout(aiTimeout);clearInterval(pi);
+    document.getElementById('gen-pb').style.width='100%';
+    if(!result.ok||!result.data.questions||!result.data.questions.length){
+      throw new Error(result.data.error||'No questions returned');
+    }
+    var qs=result.data.questions;
+    finishGenerate(qs,topic,text);
+  })
+  .catch(function(err){
+    clearTimeout(aiTimeout);clearInterval(pi);
+    console.warn('AI generation failed, using local fallback:',err.message);
+    document.getElementById('gen-msg').innerHTML='<span class="pulse">Using local generation...</span>';
+    document.getElementById('gen-pb').style.width='95%';
+    setTimeout(function(){
+      var qs,tl=topic.toLowerCase();
+      if(tl.includes('world history')||tl==='history'){qs=shuffle(DEMO.slice()).slice(0,Math.min(S.qCount,20));}
+      else if(text){
+        var tq=genFromText(text,S.selTypes,S.selDiff,S.qCount);
+        if(tq.length<S.qCount&&topic){tq=tq.concat(getPool(topic,S.selTypes,S.selDiff,S.qCount-tq.length));}
+        qs=tq.slice(0,S.qCount);
+      }else{qs=getPool(topic,S.selTypes,S.selDiff,S.qCount);}
+      qs=qs.filter(function(q){return S.selTypes.indexOf(q.type)>=0;});
+      if(!qs.length){showNotif('No questions generated. Try Mixed difficulty or more types.','error');resetBtn();return;}
+      showNotif('Used local question bank (AI unavailable).','info');
+      finishGenerate(qs,topic,text);
+    },400);
+  });
+}
+
+function finishGenerate(qs,topic,text){
+  document.getElementById('gen-pb').style.width='100%';
+  S.questions=qs;S.idx=0;S.correct=0;S.incorrect=0;S.skipped=0;S.ansLog=[];
+  S.topic=topic||'Custom Text';S.timerEnabled=S.selTimer>0;S.timerMax=S.selTimer;S.startTime=Date.now();
+  ST.lastQ=qs;saveSt();resetBtn();startQuiz();
+}
+
+function resetBtn(){
+  var btn=document.getElementById('gen-btn');btn.disabled=false;
+  btn.innerHTML='<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg> Generate Quiz';
+  document.getElementById('gen-pb-wrap').style.display='none';
+  document.getElementById('gen-msg').style.display='none';
+  document.getElementById('gen-pb').style.width='0%';
+}
+
+// QUIZ ENGINE
+function startQuiz(){
+  document.getElementById('generate-main').style.display='none';
+  document.getElementById('quiz-screen').style.display='block';
+  document.getElementById('results-screen').style.display='none';
+  renderQ();
+}
+
+function esc(s){return String(s).replace(/&/g,'&').replace(/</g,'<').replace(/>/g,'>').replace(/"/g,'"');}
+
+function renderQ(){
+  if(S.idx>=S.questions.length){endQuiz();return;}
+  var q=S.questions[S.idx];S.selAns=null;S.answered=false;
+  var tot=S.questions.length,n=S.idx+1;
+  document.getElementById('q-prog-txt').textContent='Question '+n+' of '+tot;
+  document.getElementById('quiz-pb').style.width=(n/tot*100)+'%';
+  document.getElementById('score-c').textContent=S.correct;
+  document.getElementById('score-i').textContent=S.incorrect;
+  var tmap={mcq:['Multiple Choice','bmcq'],tf:['True / False','btf'],fib:['Fill in the Blank','bfib']};
+  var dmap={easy:'de',medium:'dm',hard:'dh'};
+  var ti=tmap[q.type]||tmap.mcq;
+  var html='<div class="qtbdg '+ti[1]+'">';
+  html+='<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>';
+  html+=ti[0]+'<span class="ddot '+(dmap[q.diff]||'dm')+'"></span></div>';
+  html+='<div class="qtxt">'+esc(q.q)+'</div>';
+  if(q.type==='mcq'){
+    html+='<div class="olist">';
+    var ls=['A','B','C','D'];
+    for(var i=0;i<q.opts.length;i++){html+='<div class="oitem" data-idx="'+i+'" onclick="selOpt(this,'+i+')"><span class="oltr">'+ls[i]+'</span><span>'+esc(q.opts[i])+'</span></div>';}
+    html+='</div>';
+  }else if(q.type==='tf'){
+    html+='<div class="tfopts">';
+    html+='<div class="tfbtn" data-val="true" onclick="selTF(this,true)"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>True</div>';
+    html+='<div class="tfbtn" data-val="false" onclick="selTF(this,false)"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>False</div>';
+    html+='</div>';
+  }else{
+    html+='<div class="fibwrp"><input type="text" class="fibinp" id="fib-inp" placeholder="Type your answer..." oninput="onFibInput()" onkeydown="onFibKey(event)"></div>';
+  }
+  document.getElementById('question-card').innerHTML=html;
+  document.getElementById('check-btn').style.display='inline-flex';document.getElementById('check-btn').disabled=true;
+  document.getElementById('next-btn').style.display='none';
+  document.getElementById('skip-wrap').style.display='block';
+  if(q.type==='fib')setTimeout(function(){var e=document.getElementById('fib-inp');if(e)e.focus();},80);
+  if(S.timerEnabled)startTimer();
+  else document.getElementById('timer-wrap').style.display='none';
+}
+
+function selOpt(el,idx){if(S.answered)return;document.querySelectorAll('.oitem').forEach(function(o){o.classList.remove('sel');});el.classList.add('sel');S.selAns=idx;document.getElementById('check-btn').disabled=false;}
+function selTF(el,val){if(S.answered)return;document.querySelectorAll('.tfbtn').forEach(function(b){b.classList.remove('sel');});el.classList.add('sel');S.selAns=val;document.getElementById('check-btn').disabled=false;}
+function onFibInput(){var v=document.getElementById('fib-inp').value.trim();document.getElementById('check-btn').disabled=v.length===0;}
+function onFibKey(e){if(e.key==='Enter'){if(!S.answered&&document.getElementById('fib-inp').value.trim())checkAnswer();else if(S.answered)nextQ();}}
+
+function checkAnswer(){
+  if(S.answered)return;
+  if(S.timer)clearInterval(S.timer);
+  S.answered=true;
+  var q=S.questions[S.idx],ok=false;
+  if(q.type==='mcq'){
+    ok=S.selAns===q.ans;
+    document.querySelectorAll('.oitem').forEach(function(el){
+      el.classList.add('dis');var i=parseInt(el.dataset.idx);
+      if(i===q.ans)el.classList.add('cor');else if(i===S.selAns&&!ok)el.classList.add('inc');
+    });
+  }else if(q.type==='tf'){
+    ok=S.selAns===q.ans;
+    document.querySelectorAll('.tfbtn').forEach(function(el){
+      el.classList.add('dis');var v=el.dataset.val==='true';
+      if(v===q.ans)el.classList.add('cor');else if(v===S.selAns&&!ok)el.classList.add('inc');
+    });
+  }else{
+    var ua=document.getElementById('fib-inp').value.trim().toLowerCase();
+    var alts=q.alts?q.alts.map(function(a){return a.toLowerCase();}):[q.ans.toLowerCase()];
+    ok=alts.indexOf(ua)>=0||ua===q.ans.toLowerCase();
+    var fe=document.getElementById('fib-inp');fe.disabled=true;fe.classList.add(ok?'cor':'inc');
+    if(!ok){var h=document.createElement('div');h.style.cssText='margin-top:8px;font-size:.85rem;color:var(--green)';h.textContent='Correct: '+q.ans;fe.parentNode.appendChild(h);}
+  }
+  if(ok){S.correct++;if(ST.typeStats[q.type])ST.typeStats[q.type].c++;if(ST.diffStats[q.diff])ST.diffStats[q.diff].c++;}
+  else S.incorrect++;
+  if(ST.typeStats[q.type])ST.typeStats[q.type].t++;
+  if(ST.diffStats[q.diff])ST.diffStats[q.diff].t++;
+  S.ansLog.push({q:q,ok:ok,ua:S.selAns});
+  document.getElementById('score-c').textContent=S.correct;
+  document.getElementById('score-i').textContent=S.incorrect;
+  if(q.exp){
+    var eh='<div class="expbox"><div class="explbl"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Explanation</div><div class="exptxt">'+esc(q.exp)+'</div></div>';
+    document.getElementById('question-card').insertAdjacentHTML('beforeend',eh);
+  }
+  document.getElementById('check-btn').style.display='none';
+  document.getElementById('next-btn').style.display='inline-flex';
+  var nb=document.getElementById('next-btn');
+  var isLast=S.idx>=S.questions.length-1;
+  nb.innerHTML=(isLast?'Finish ':'Next ')+'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>';
+}
+
+function nextQ(){S.idx++;renderQ();}
+function skipQ(){S.skipped++;S.idx++;renderQ();}
+
+// TIMER
+function startTimer(){
+  var wrap=document.getElementById('timer-wrap');wrap.style.display='block';wrap.className='tcirc';
+  S.timerSec=S.timerMax;document.getElementById('timer-txt').textContent=S.timerSec;
+  var circ=150.796;document.getElementById('timer-fl').style.strokeDashoffset=0;
+  if(S.timer)clearInterval(S.timer);
+  S.timer=setInterval(function(){
+    S.timerSec--;document.getElementById('timer-txt').textContent=S.timerSec;
+    document.getElementById('timer-fl').style.strokeDashoffset=circ*(1-S.timerSec/S.timerMax);
+    if(S.timerSec<=5)wrap.classList.add('turg');
+    if(S.timerSec<=0){clearInterval(S.timer);if(!S.answered){if(S.selAns===null)skipQ();else checkAnswer();}}
+  },1000);
+}
+
+// END QUIZ
+function endQuiz(){
+  if(S.timer)clearInterval(S.timer);
+  var elapsed=Math.round((Date.now()-S.startTime)/1000);
+  var total=S.questions.length,pct=total>0?Math.round(S.correct/total*100):0;
+  ST.totalQuizzes++;ST.totalCorrect+=S.correct;ST.totalIncorrect+=S.incorrect;ST.totalTime+=elapsed;
+  if(pct>=50){ST.streak++;if(ST.streak>ST.bestStreak)ST.bestStreak=ST.streak;}else ST.streak=0;
+  ST.history.unshift({topic:S.topic,date:new Date().toLocaleDateString(),correct:S.correct,total:total,pct:pct,time:elapsed});
+  if(ST.history.length>20)ST.history=ST.history.slice(0,20);
+  saveSt();updateNavStreak();
+  document.getElementById('quiz-screen').style.display='none';
+  document.getElementById('results-screen').style.display='block';
+  document.getElementById('res-c').textContent=S.correct;
+  document.getElementById('res-i').textContent=S.incorrect;
+  document.getElementById('res-sk').textContent=S.skipped;
+  document.getElementById('res-t').textContent=elapsed+'s';
+  document.getElementById('final-pct').textContent=pct+'%';
+  document.getElementById('res-title').textContent=pct>=80?'Outstanding!':pct>=60?'Great Job!':pct>=40?'Keep Going!':'Practice More!';
+  document.getElementById('res-sub').textContent='You scored '+S.correct+' out of '+total+' questions correctly.';
+  setTimeout(function(){
+    var fill=document.getElementById('score-ring');fill.style.strokeDashoffset=408.41*(1-pct/100);
+    fill.style.stroke=pct>=80?'var(--green)':pct>=50?'var(--yellow)':'var(--red)';
+  },100);
+  if(pct>=80)launchConfetti();
+  var rv=document.getElementById('res-review');rv.innerHTML='<div class="stitle" style="margin-bottom:12px">Answer Review</div>';
+  S.ansLog.forEach(function(log){
+    var q=log.q;
+    var icon=log.ok?
+      '<svg class="rico" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="20 6 9 17 4 12"/></svg>':
+      '<svg class="rico" viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>';
+    var ca='';
+    if(q.type==='mcq'&&q.opts)ca=q.opts[q.ans];
+    else if(q.type==='tf')ca=q.ans?'True':'False';
+    else ca=q.ans;
+    rv.innerHTML+='<div class="ritem">'+icon+'<div><div class="rq">'+esc(q.q)+'</div><div class="ra">Correct answer: <span style="color:var(--green)">'+esc(ca)+'</span></div></div></div>';
+  });
+}
+
+function retakeQuiz(){
+  S.idx=0;S.correct=0;S.incorrect=0;S.skipped=0;S.ansLog=[];
+  S.questions=shuffle(S.questions.slice());S.startTime=Date.now();
+  document.getElementById('results-screen').style.display='none';
+  startQuiz();
+}
+
+// FLASHCARDS
+function buildFlashcards(){
+  var qs=ST.lastQ||[];
+  if(qs.length>0){S.fcCards=qs.slice();S.fcIdx=0;S.fcFlipped=false;S.fcRatings={};}
+}
+function renderFC(){
+  var cards=S.fcCards;
+  if(!cards||!cards.length){
+    document.getElementById('fc-empty').style.display='block';
+    document.getElementById('fc-content').style.display='none';return;
+  }
+  document.getElementById('fc-empty').style.display='none';
+  document.getElementById('fc-content').style.display='block';
+  document.getElementById('fc-complete').style.display='none';
+  renderFCCard();
+}
+function renderFCCard(){
+  var cards=S.fcCards,idx=S.fcIdx;
+  if(idx>=cards.length){
+    var k=Object.values(S.fcRatings).filter(function(r){return r==='knew';}).length;
+    var m=Object.values(S.fcRatings).filter(function(r){return r==='miss';}).length;
+    document.getElementById('fc-fin-knew').textContent=k;
+    document.getElementById('fc-fin-miss').textContent=m;
+    document.getElementById('fc-complete').style.display='block';return;
+  }
+  var q=cards[idx];
+  document.getElementById('fc-cur').textContent=idx+1;
+  document.getElementById('fc-tot').textContent=cards.length;
+  var k=Object.values(S.fcRatings).filter(function(r){return r==='knew';}).length;
+  var m=Object.values(S.fcRatings).filter(function(r){return r==='miss';}).length;
+  document.getElementById('fc-knew-cnt').textContent=k;
+  document.getElementById('fc-miss-cnt').textContent=m;
+  document.getElementById('fc-topic').textContent=q.topic||'Quiz';
+  document.getElementById('fc-q').textContent=q.q;
+  var ans='';
+  if(q.type==='mcq'&&q.opts)ans=q.opts[q.ans];
+  else if(q.type==='tf')ans=q.ans?'True':'False';
+  else ans=q.ans;
+  document.getElementById('fc-a').textContent=ans;
+  var inner=document.getElementById('fc-inner');inner.classList.remove('flipped');S.fcFlipped=false;
+  document.getElementById('fc-miss-btn').disabled=true;document.getElementById('fc-knew-btn').disabled=true;
+  document.getElementById('fc-prev').disabled=idx===0;document.getElementById('fc-next').disabled=false;
+  var dots=document.getElementById('fc-dots');dots.innerHTML='';
+  for(var i=0;i<cards.length;i++){
+    var d=document.createElement('div');d.className='fcdot';
+    if(i===idx)d.classList.add('active');
+    else if(S.fcRatings[i]==='knew')d.classList.add('knew');
+    else if(S.fcRatings[i]==='miss')d.classList.add('miss');
+    dots.appendChild(d);
+  }
+}
+function flipCard(){
+  S.fcFlipped=!S.fcFlipped;
+  document.getElementById('fc-inner').classList.toggle('flipped',S.fcFlipped);
+  document.getElementById('fc-miss-btn').disabled=!S.fcFlipped;
+  document.getElementById('fc-knew-btn').disabled=!S.fcFlipped;
+}
+function rateCard(r){S.fcRatings[S.fcIdx]=r;S.fcIdx++;renderFCCard();}
+function fcNav(d){S.fcIdx=Math.max(0,Math.min(S.fcCards.length-1,S.fcIdx+d));renderFCCard();}
+function shuffleFC(){S.fcCards=shuffle(S.fcCards.slice());S.fcIdx=0;S.fcRatings={};renderFCCard();}
+function resetFC(){S.fcIdx=0;S.fcRatings={};document.getElementById('fc-complete').style.display='none';renderFCCard();}
+function studyMissed(){
+  var missed=[];
+  Object.keys(S.fcRatings).forEach(function(i){if(S.fcRatings[i]==='miss')missed.push(S.fcCards[parseInt(i)]);});
+  if(!missed.length){showNotif('No missed cards!','info');return;}
+  S.fcCards=missed;S.fcIdx=0;S.fcRatings={};
+  document.getElementById('fc-complete').style.display='none';renderFCCard();
+}
+
+// STATS
+function renderStats(){
+  updateNavStreak();
+  var tot=ST.totalCorrect+ST.totalIncorrect;
+  var acc=tot>0?Math.round(ST.totalCorrect/tot*100):0;
+  document.getElementById('st-quizzes').textContent=ST.totalQuizzes;
+  document.getElementById('st-correct').textContent=ST.totalCorrect;
+  document.getElementById('st-acc-sub').textContent=acc+'% accuracy';
+  document.getElementById('st-streak').textContent=ST.streak;
+  document.getElementById('st-best-sub').textContent='Best: '+ST.bestStreak;
+  var mins=Math.floor(ST.totalTime/60);
+  document.getElementById('st-time').textContent=mins>=60?Math.floor(mins/60)+'h '+mins%60+'m':mins+'m';
+  document.getElementById('streak-big').textContent=ST.streak;
+  document.getElementById('streak-best-txt').textContent='Best streak: '+ST.bestStreak;
+  function pBar(id,vid,s){var p=s.t>0?Math.round(s.c/s.t*100):0;setTimeout(function(){document.getElementById(id).style.width=p+'%';},100);document.getElementById(vid).textContent=p+'%';}
+  pBar('bar-mcq','val-mcq',ST.typeStats.mcq);pBar('bar-tf','val-tf',ST.typeStats.tf);pBar('bar-fib','val-fib',ST.typeStats.fib);
+  pBar('bar-easy','val-easy',ST.diffStats.easy);pBar('bar-med','val-med',ST.diffStats.medium);pBar('bar-hard','val-hard',ST.diffStats.hard);
+  document.getElementById('acc-pct').textContent=acc+'%';
+  setTimeout(function(){document.getElementById('acc-ring').style.strokeDashoffset=326.73*(1-acc/100);},100);
+  var hl=document.getElementById('history-list');
+  if(!ST.history||!ST.history.length){hl.innerHTML='<div class="empty" style="padding:30px"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><p style="margin-top:10px">No quiz history yet!</p></div>';return;}
+  hl.innerHTML='';
+  ST.history.forEach(function(h){
+    var sc=h.pct>=80?'vg':h.pct>=50?'vy':'vr';
+    hl.innerHTML+='<div class="hitem"><div><div class="htop">'+esc(h.topic)+'</div><div class="hmeta">'+h.date+' &bull; '+h.total+' questions &bull; '+h.time+'s</div></div><div class="hscore '+sc+'">'+h.pct+'%</div></div>';
+  });
+}
+function updateNavStreak(){document.getElementById('nav-streak-val').textContent=ST.streak||0;}
+
+// MODALS
+function confirmQuit(){document.getElementById('quit-modal').classList.add('open');}
+function quitQuiz(){closeModal('quit-modal');if(S.timer)clearInterval(S.timer);goHome();}
+function confirmClear(){document.getElementById('clear-modal').classList.add('open');}
+function clearStats(){ST=defSt();saveSt();closeModal('clear-modal');renderStats();showNotif('All stats cleared.','info');}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+document.querySelectorAll('.movl').forEach(function(m){m.addEventListener('click',function(e){if(e.target===m)m.classList.remove('open');});});
+
+// NOTIFICATIONS
+function showNotif(msg,type){
+  var n=document.createElement('div');n.className='notif '+(type||'info');
+  var icons={success:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>',error:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>',info:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>'};
+  n.innerHTML=(icons[type]||icons.info)+msg;document.body.appendChild(n);
+  setTimeout(function(){n.style.animation='slideIn .3s ease reverse';setTimeout(function(){if(n.parentNode)n.parentNode.removeChild(n);},300);},3000);
+}
+
+// CONFETTI
+function launchConfetti(){
+  var colors=['#7C3AED','#10B981','#F59E0B','#3B82F6','#EF4444','#A78BFA'];
+  for(var i=0;i<60;i++){
+    (function(i){setTimeout(function(){
+      var c=document.createElement('div');c.className='confp';
+      c.style.cssText='left:'+Math.random()*100+'vw;top:-20px;background:'+colors[Math.floor(Math.random()*colors.length)]+';animation-duration:'+(1.5+Math.random()*2)+'s;width:'+(6+Math.random()*8)+'px;height:'+(6+Math.random()*8)+'px';
+      document.body.appendChild(c);
+      setTimeout(function(){if(c.parentNode)c.parentNode.removeChild(c);},3500);
+    },i*50);})(i);
+  }
+}
+
+// INIT
+updateNavStreak();
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape'){document.querySelectorAll('.movl.open').forEach(function(m){m.classList.remove('open');});}
+});
+</script>
+</body>
+</html>
