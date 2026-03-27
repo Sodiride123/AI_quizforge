@@ -292,7 +292,7 @@ textarea.ifld{resize:vertical;min-height:120px}
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
         Try Demo Mode
       </button>
-      <button class="btn btns btnlg" onclick="document.getElementById('topic-input').focus()">
+      <button class="btn btns btnlg" onclick="goHome();setTimeout(function(){document.getElementById('topic-input').focus();},100)">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         Custom Topic
       </button>
@@ -953,7 +953,16 @@ function checkAnswer(){
 }
 
 function nextQ(){S.idx++;renderQ();}
-function skipQ(){S.skipped++;S.idx++;renderQ();}
+function skipQ(){
+  var q=S.questions[S.idx];
+  S.skipped++;S.incorrect++;
+  if(ST.typeStats[q.type])ST.typeStats[q.type].t++;
+  if(ST.diffStats[q.diff])ST.diffStats[q.diff].t++;
+  S.ansLog.push({q:q,ok:false,ua:null});
+  document.getElementById('score-c').textContent=S.correct;
+  document.getElementById('score-i').textContent=S.incorrect;
+  S.idx++;renderQ();
+}
 
 // TIMER
 function startTimer(){
