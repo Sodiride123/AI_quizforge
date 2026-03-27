@@ -86,24 +86,34 @@ def build_user_prompt(topic, text, types, diff, count):
     return "\n".join(parts)
 
 
+PRIMARY_MODEL = "claude-sonnet-4-6"
+
 def call_ai(system, user, timeout=120):
     if not GW:
         raise RuntimeError("AI gateway not configured")
     url = f"{GW['base_url'].rstrip('/')}/v1/chat/completions"
     headers = {"Authorization": f"Bearer {GW['token']}", "Content-Type": "application/json"}
-    payload = {
-        "model": GW["model"],
-        "messages": [{"role": "system", "content": system}, {"role": "user", "content": user}],
-        "temperature": 0.7,
-        "max_tokens": 4096,
-    }
-    log.info(f"Calling AI: model={GW['model']}, timeout={timeout}s")
-    t0 = time.time()
-    with httpx.Client(timeout=timeout) as client:
-        resp = client.post(url, json=payload, headers=headers)
-        resp.raise_for_status()
-    log.info(f"AI response in {time.time()-t0:.1f}s")
-    return resp.json()["choices"][0]["message"]["content"]
+    models_to_try = [PRIMARY_MODEL, GW["model"]] if GW["model"] != PRIMARY_MODEL else [PRIMARY_MODEL]
+    last_err = None
+    for model in models_to_try:
+        payload = {
+            "model": model,
+            "messages": [{"role": "system", "content": system}, {"role": "user", "content": user}],
+            "temperature": 0.7,
+            "max_tokens": 4096,
+        }
+        log.info(f"Calling AI: model={model}, timeout={timeout}s")
+        t0 = time.time()
+        try:
+            with httpx.Client(timeout=timeout) as client:
+                resp = client.post(url, json=payload, headers=headers)
+                resp.raise_for_status()
+            log.info(f"AI response in {time.time()-t0:.1f}s (model={model})")
+            return resp.json()["choices"][0]["message"]["content"]
+        except Exception as e:
+            log.warning(f"Model {model} failed: {e}. Trying fallback...")
+            last_err = e
+    raise last_err
 
 
 def parse_questions(raw_text, expected_count):
@@ -199,7 +209,7 @@ async def generate(req: GenerateRequest):
 
 @app.get("/api/health")
 async def health():
-    return {"status": "ok", "model": GW["model"] if GW else "not configured"}
+    return {"status": "ok", "model": PRIMARY_MODEL, "fallback": GW["model"] if GW else "not configured"}
 
 
 # Static files - MUST be last (catch-all)
