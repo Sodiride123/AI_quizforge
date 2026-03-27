@@ -203,7 +203,7 @@ async def health():
 
 
 # Static files - MUST be last (catch-all)
-app.mount("/", StaticFiles(directory="/workspace/quizforge", html=True), name="static")
+app.mount("/", StaticFiles(directory="/workspace/AI_quizforge", html=True), name="static")
 
 
 if __name__ == "__main__":
